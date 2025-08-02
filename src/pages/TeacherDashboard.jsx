@@ -1,39 +1,22 @@
-
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
-import { 
-  Users, 
-  BookOpen, 
-  TrendingUp, 
-  Calendar,
-  UserCheck,
-  UserX,
-  BarChart3,
-  LogOut,
-  User,
-  Bell,
-  Plus,
-  Search
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { useAuth } from '@/contexts/AuthContext';
-import { toast } from '@/components/ui/use-toast';
 import TeacherHeader from '@/components/teacher/TeacherHeader';
 import StatsCards from '@/components/teacher/StatsCards';
 import StudentList from '@/components/teacher/StudentList';
 import ClassAnalytics from '@/components/teacher/ClassAnalytics';
 import QuickActions from '@/components/teacher/QuickActions';
 import RecentActivity from '@/components/teacher/RecentActivity';
+import AddStudentModal from '@/components/teacher/AddStudentModal';
 
 function TeacherDashboard() {
   const { user, logout } = useAuth();
   const [students, setStudents] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedClass, setSelectedClass] = useState('All Classes');
+  const [showAddModal, setShowAddModal] = useState(false);
 
-  // Mock student data - in real app, this would come from Firebase
+  // Load mock student data on mount
   useEffect(() => {
     const mockStudents = [
       {
@@ -90,6 +73,7 @@ function TeacherDashboard() {
     setStudents(mockStudents);
   }, []);
 
+  // Filter students by search and class
   const filteredStudents = students.filter(student => {
     const matchesSearch = student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
                          student.email.toLowerCase().includes(searchTerm.toLowerCase());
@@ -97,33 +81,36 @@ function TeacherDashboard() {
     return matchesSearch && matchesClass;
   });
 
+  // Stats calculations
   const totalStudents = students.length;
-  const averageAttendance = students.reduce((acc, student) => 
-    acc + (student.attendance.present / student.attendance.total) * 100, 0) / totalStudents;
-  const averageProductivity = students.reduce((acc, student) => acc + student.productivity, 0) / totalStudents;
-  const studentsAtRisk = students.filter(student => 
-    (student.attendance.present / student.attendance.total) * 100 < 75).length;
+  const averageAttendance = totalStudents
+    ? students.reduce((acc, student) => acc + (student.attendance.present / student.attendance.total) * 100, 0) / totalStudents
+    : 0;
+  const averageProductivity = totalStudents
+    ? students.reduce((acc, student) => acc + student.productivity, 0) / totalStudents
+    : 0;
+  const studentsAtRisk = students.filter(student =>
+    (student.attendance.present / student.attendance.total) * 100 < 75
+  ).length;
 
+  // Classes for filter dropdown
   const classes = ['All Classes', ...new Set(students.map(s => s.class))];
 
-  // Add student using user input
-  const onAddStudent = () => {
-    const name = prompt("Enter student name:");
-    const email = prompt("Enter student email:");
-    const studentClass = prompt("Enter student class:");
-    if (!name || !email || !studentClass) return;
+  // Show modal to add student
+  const onAddStudent = () => setShowAddModal(true);
 
+  // Handle adding a new student from modal
+  const handleAddStudent = (studentData) => {
     const newStudent = {
       id: Date.now(),
-      name,
-      email,
-      class: studentClass,
+      ...studentData,
       attendance: { present: 0, total: 0 },
       productivity: 0,
       lastActive: 'Just now',
-      avatar: name.split(' ').map(n => n[0]).join('').toUpperCase()
+      avatar: studentData.name.split(' ').map(n => n[0]).join('').toUpperCase()
     };
     setStudents(prev => [...prev, newStudent]);
+    setShowAddModal(false);
   };
 
   return (
@@ -135,14 +122,12 @@ function TeacherDashboard() {
 
       <div className="min-h-screen p-4 md:p-6">
         <TeacherHeader user={user} logout={logout} />
-        
         <StatsCards 
           totalStudents={totalStudents}
           averageAttendance={averageAttendance}
           averageProductivity={averageProductivity}
           studentsAtRisk={studentsAtRisk}
         />
-
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2">
             <StudentList 
@@ -152,16 +137,21 @@ function TeacherDashboard() {
               selectedClass={selectedClass}
               setSelectedClass={setSelectedClass}
               classes={classes}
-              onAddStudent={onAddStudent} // <-- Pass the function here
+              onAddStudent={onAddStudent}
             />
           </div>
-
           <div className="space-y-8">
             <ClassAnalytics students={students} studentsAtRisk={studentsAtRisk} />
             <QuickActions />
             <RecentActivity />
           </div>
         </div>
+        <AddStudentModal
+          open={showAddModal}
+          onClose={() => setShowAddModal(false)}
+          onSubmit={handleAddStudent}
+          classes={classes.filter(c => c !== 'All Classes')}
+        />
       </div>
     </>
   );
