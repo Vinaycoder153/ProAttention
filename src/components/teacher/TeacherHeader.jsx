@@ -21,7 +21,7 @@ function TeacherHeader({ user, logout }) {
           variant="outline"
           size="icon"
           className="glass-effect border-white/20 text-white hover:bg-white/10"
-          onClick={() => toast({ title: "🚧 Notifications feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀" })}
+          onClick={() => toast({ title: "Support me  and encaurage me on Patreon! 🚀" })}
         >
           <Bell className="w-5 h-5" />
         </Button>
@@ -29,7 +29,7 @@ function TeacherHeader({ user, logout }) {
           variant="outline"
           size="icon"
           className="glass-effect border-white/20 text-white hover:bg-white/10"
-          onClick={() => toast({ title: "🚧 Profile feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀" })}
+          onClick={() => toast({ title: "🚧my project is in progress! 🚧help me with my project! 🚀" })}
         >
           <User className="w-5 h-5" />
         </Button>
