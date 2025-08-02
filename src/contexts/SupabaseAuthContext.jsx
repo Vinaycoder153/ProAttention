@@ -103,3 +103,38 @@ export const useAuth = () => {
   }
   return context;
 };
+
+// Example: Add student to Supabase
+export async function addStudentToDB(student) {
+  const { data, error } = await supabase
+    .from('students')
+    .insert([student]);
+  if (error) throw error;
+  return data;
+}
+
+export async function addAttendance(studentId, date, present) {
+  const { data, error } = await supabase
+    .from('attendance')
+    .insert([{ student_id: studentId, date, present }]);
+  if (error) throw error;
+  return data;
+}
+
+export async function getStudentReport(studentId) {
+  const { data, error } = await supabase
+    .from('attendance')
+    .select('*')
+    .eq('student_id', studentId);
+  if (error) throw error;
+  // Process data for report...
+  return data;
+}
+
+export async function sendNotification(studentId, message) {
+  const { data, error } = await supabase
+    .from('notifications')
+    .insert([{ student_id: studentId, message }]);
+  if (error) throw error;
+  return data;
+}

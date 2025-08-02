@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -7,15 +7,29 @@ function AddStudentModal({ open, onClose, onSubmit, classes }) {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [studentClass, setStudentClass] = useState(classes[0] || '');
+  const [error, setError] = useState('');
+  const modalRef = useRef(null);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (name && email && studentClass) {
-      onSubmit({ name, email, class: studentClass });
+  useEffect(() => {
+    if (open && modalRef.current) {
+      modalRef.current.focus();
+    }
+    if (!open) {
       setName('');
       setEmail('');
       setStudentClass(classes[0] || '');
+      setError('');
     }
+  }, [open, classes]);
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!name || !email || !studentClass) {
+      setError('All fields are required.');
+      return;
+    }
+    setError('');
+    onSubmit({ name, email, class: studentClass });
   };
 
   if (!open) return null;
@@ -27,12 +41,15 @@ function AddStudentModal({ open, onClose, onSubmit, classes }) {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/50"
       role="dialog"
       aria-modal="true"
+      tabIndex={-1}
+      ref={modalRef}
     >
       <form
         onSubmit={handleSubmit}
         className="glass-effect rounded-xl p-8 w-full max-w-md space-y-4"
       >
         <h2 className="text-xl font-semibold text-white mb-2">Add New Student</h2>
+        {error && <div className="text-red-400 text-sm">{error}</div>}
         <Input
           type="text"
           value={name}

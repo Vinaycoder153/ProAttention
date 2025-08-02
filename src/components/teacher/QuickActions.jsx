@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import PropTypes from 'prop-types';
 import { motion } from 'framer-motion';
 import { Calendar, UserCheck, BarChart3, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +7,6 @@ import { toast } from '@/components/ui/use-toast';
 function QuickActions() {
   const [loading, setLoading] = useState({});
 
-  // Unified handler for actions
   const handleAction = (action) => {
     setLoading((prev) => ({ ...prev, [action]: true }));
     setTimeout(() => {
@@ -26,7 +24,7 @@ function QuickActions() {
         default:
           break;
       }
-    }, 800); // Simulate async action
+    }, 800);
   };
 
   return (
@@ -42,10 +40,9 @@ function QuickActions() {
         <Calendar className="w-5 h-5 mr-2 text-purple-400" aria-hidden="true" />
         Quick Actions
       </h2>
-      
       <div className="space-y-3">
-        <Button 
-          className="w-full justify-start bg-purple-600 hover:bg-purple-700"
+        <Button
+          className="w-full justify-start bg-purple-600 hover:bg-purple-700 focus:ring-2 focus:ring-purple-400"
           aria-label="Take Attendance"
           disabled={loading.attendance}
           onClick={() => handleAction('attendance')}
@@ -53,9 +50,9 @@ function QuickActions() {
           <UserCheck className="w-4 h-4 mr-2" aria-hidden="true" />
           {loading.attendance ? "Taking Attendance..." : "Take Attendance"}
         </Button>
-        <Button 
-          variant="outline" 
-          className="w-full justify-start border-white/20 text-white hover:bg-white/10"
+        <Button
+          variant="outline"
+          className="w-full justify-start border-white/20 text-white hover:bg-white/10 focus:ring-2 focus:ring-blue-400"
           aria-label="Generate Report"
           disabled={loading.report}
           onClick={() => handleAction('report')}
@@ -63,9 +60,9 @@ function QuickActions() {
           <BarChart3 className="w-4 h-4 mr-2" aria-hidden="true" />
           {loading.report ? "Generating Report..." : "Generate Report"}
         </Button>
-        <Button 
-          variant="outline" 
-          className="w-full justify-start border-white/20 text-white hover:bg-white/10"
+        <Button
+          variant="outline"
+          className="w-full justify-start border-white/20 text-white hover:bg-white/10 focus:ring-2 focus:ring-pink-400"
           aria-label="Send Notifications"
           disabled={loading.notify}
           onClick={() => handleAction('notify')}
@@ -77,7 +74,5 @@ function QuickActions() {
     </motion.div>
   );
 }
-
-QuickActions.propTypes = {};
 
 export default QuickActions;

@@ -8,6 +8,7 @@ import ClassAnalytics from '@/components/teacher/ClassAnalytics';
 import QuickActions from '@/components/teacher/QuickActions';
 import RecentActivity from '@/components/teacher/RecentActivity';
 import AddStudentModal from '@/components/teacher/AddStudentModal';
+import { addStudentToDB } from '@/lib/db';
 
 function TeacherDashboard() {
   const { user, logout } = useAuth();
@@ -100,7 +101,7 @@ function TeacherDashboard() {
   const onAddStudent = () => setShowAddModal(true);
 
   // Handle adding a new student from modal
-  const handleAddStudent = (studentData) => {
+  const handleAddStudent = async (studentData) => {
     const newStudent = {
       id: Date.now(),
       ...studentData,
@@ -109,8 +110,14 @@ function TeacherDashboard() {
       lastActive: 'Just now',
       avatar: studentData.name.split(' ').map(n => n[0]).join('').toUpperCase()
     };
-    setStudents(prev => [...prev, newStudent]);
-    setShowAddModal(false);
+    try {
+      await addStudentToDB(newStudent);
+      setStudents(prev => [...prev, newStudent]);
+      setShowAddModal(false);
+    } catch (err) {
+      // Optionally show error toast here
+      console.error('Failed to add student:', err);
+    }
   };
 
   return (
@@ -120,7 +127,7 @@ function TeacherDashboard() {
         <meta name="description" content="Monitor student attendance, track productivity, and manage your classes with comprehensive analytics and insights." />
       </Helmet>
 
-      <div className="min-h-screen p-4 md:p-6">
+      <div className="min-h-screen p-4 md:p-6 bg-gradient-to-br from-gray-900 via-blue-900 to-purple-900">
         <TeacherHeader user={user} logout={logout} />
         <StatsCards 
           totalStudents={totalStudents}
