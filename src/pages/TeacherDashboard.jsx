@@ -38,8 +38,8 @@ function TeacherDashboard() {
     const mockStudents = [
       {
         id: 1,
-        name: 'Alice Johnson',
-        email: 'alice@student.edu',
+        name: 'Sudeeep',
+        email: 'sudeeep@student.edu',
         class: 'Computer Science',
         attendance: { present: 18, total: 20 },
         productivity: 85,
@@ -58,8 +58,8 @@ function TeacherDashboard() {
       },
       {
         id: 3,
-        name: 'Carol Davis',
-        email: 'carol@student.edu',
+        name: 'Vinay my',
+        email: 'vvvinay5630@gmail.com',
         class: 'Mathematics',
         attendance: { present: 19, total: 20 },
         productivity: 92,
@@ -68,8 +68,8 @@ function TeacherDashboard() {
       },
       {
         id: 4,
-        name: 'David Wilson',
-        email: 'david@student.edu',
+        name: 'Sathwik gowda ph',
+        email: 'sathwikgowdaph@gmail.com',
         class: 'Physics',
         attendance: { present: 12, total: 20 },
         productivity: 68,
@@ -106,6 +106,26 @@ function TeacherDashboard() {
 
   const classes = ['All Classes', ...new Set(students.map(s => s.class))];
 
+  // Add student using user input
+  const onAddStudent = () => {
+    const name = prompt("Enter student name:");
+    const email = prompt("Enter student email:");
+    const studentClass = prompt("Enter student class:");
+    if (!name || !email || !studentClass) return;
+
+    const newStudent = {
+      id: Date.now(),
+      name,
+      email,
+      class: studentClass,
+      attendance: { present: 0, total: 0 },
+      productivity: 0,
+      lastActive: 'Just now',
+      avatar: name.split(' ').map(n => n[0]).join('').toUpperCase()
+    };
+    setStudents(prev => [...prev, newStudent]);
+  };
+
   return (
     <>
       <Helmet>
@@ -132,6 +152,7 @@ function TeacherDashboard() {
               selectedClass={selectedClass}
               setSelectedClass={setSelectedClass}
               classes={classes}
+              onAddStudent={onAddStudent} // <-- Pass the function here
             />
           </div>
 

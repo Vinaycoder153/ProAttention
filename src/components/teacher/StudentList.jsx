@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Users, Plus, Search } from 'lucide-react';
@@ -13,7 +12,8 @@ function StudentList({
   setSearchTerm, 
   selectedClass, 
   setSelectedClass, 
-  classes 
+  classes,
+  onAddStudent 
 }) {
   return (
     <motion.div
@@ -28,7 +28,10 @@ function StudentList({
           Student Overview
         </h2>
         <Button
-          onClick={() => toast({ title: "🚧 Add student feature isn't implemented yet—but don't worry! You can request it in your next prompt! 🚀" })}
+          onClick={() => {
+            toast({ title: "🚧 Ai requested to you please encourage Vinay to add a student to your class 🚀" });
+            if (onAddStudent) onAddStudent();
+          }}
           size="sm"
           className="bg-blue-600 hover:bg-blue-700"
         >
